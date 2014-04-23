@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Scanner;
+
 public class Main {
 
 	public static final float PI = (float) Math.PI;
@@ -8,19 +10,30 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(new StringBuilder("Trigonomie-Rechnung in einem Zahlenbereich\n")
-				.append("Untere Grenze eingeben: ").toString());
-		float u = 1;
-		System.out.println("Zweite Zahl eingeben: ");
-		float o = 1;
-		System.out.println(new StringBuilder("sin(pi) = ").append(sinus(2))
-				.append("\nJava-Lib result: ").append(Math.sin(2));
+		StringBuilder sb = new StringBuilder();
+		Scanner s = new Scanner(System.in);
+		System.out.println("Trigonomie-Rechnung in einem Zahlenbereich\nUntere Grenze eingeben: ");
+		final float u = s.nextFloat();
+		System.out.println("Obere Grenze eingeben: ");
+		final float o = s.nextFloat();
+		for(float i=u;i<o;i+=0.1){
+			sb.append("\nsin(").append(i).append(") = ").append(sinus(i));
+			sb.append("\n  Java-Lib result: ").append((float) Math.sin(i));
+			sb.append("\ncos(").append(i).append(") = ").append(cosinus(i));
+			sb.append("\ntan(").append(i).append(") = ").append(tangent(i));
+			sb.append("\n--");
+		}
+		sb.append("\nsin(").append(o).append(") = ").append(sinus(o));
+		sb.append("\n  Java-Lib result: ").append((float) Math.sin(o));
+		sb.append("\ncos(").append(o).append(") = ").append(cosinus(o));
+		sb.append("\ntan(").append(o).append(") = ").append(tangent(o));
 		
+		System.out.println(sb.toString());
 	}
 
 	
 	private static float sinus(float x) {
-		x = x%(2*PI);
+		x = modulo(x, 2*PI);
 		if(x<-PI/2)
 			x = -x;
 		if (-PI/2 <= x && x <= PI/2)
@@ -37,8 +50,6 @@ public class Main {
 		float sum = x;
 		float pot = x; 
 		float fact = 1;
-		if(steps<2)
-			return 0;
 		for(int i=3; i<=3+(steps-1)*2; i+=2) {
 			pot = pot * x * x;
 			fact = fact * (i-1) * i;
@@ -54,11 +65,11 @@ public class Main {
 		return sinus(x+PI/2);
 	}
 	private static float tangent(float x){
-		if(x%PI == PI/2 || x%PI == -PI/2){
+		if(modulo(x, PI) == PI/2 || modulo(x, PI) == -PI/2){
 			System.out.println("ERROR: tan("+x+") not defined!");
 			return 0;
 		}
-		x = x%PI;
+		x = modulo(x, PI);
 		if(x>PI/2)
 			x-=PI;
 		else if(x<-PI/2)
@@ -69,5 +80,20 @@ public class Main {
 	
 	private static float tan0(float x){
 		return sin0(x)/sin0(x+PI/2);
+	}
+	/**
+	 * Implementing a%b for floats
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	private static float modulo(float a, float b){
+		if(a<b)
+			return a;
+		else if(a==b)
+			return 0;
+		double x = a/b;
+		int y = (int) Math.floor(x);
+		return a-y*b;
 	}
 }
