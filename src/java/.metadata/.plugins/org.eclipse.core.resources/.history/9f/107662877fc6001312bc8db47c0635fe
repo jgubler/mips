@@ -1,0 +1,85 @@
+package main;
+
+import java.util.Scanner;
+
+public class Main {
+
+	private static final float PI = (float) Math.PI;
+	private static final int steps = 6;
+	private static final StringBuilder sb = new StringBuilder();
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Scanner s = new Scanner(System.in);
+		System.out.println("Trigonomie-Rechnung in einem Zahlenbereich \nUntere Grenze eingeben: ");
+		float u = s.nextFloat();
+		System.out.println("\nObere Grenze eingeben: ");
+		float o = s.nextFloat();
+		for(float i = u; i<o; i+=0.1) {
+			sb.append("sin(").append(i).append(") = ").append(sinus(i)).append("\n");
+			sb.append("cos(").append(i).append(") = ").append(cosinus(i)).append("\n");
+			sb.append("tan(").append(i).append(") = ").append(tangent(i)).append("\n");
+		}
+		sb.append("sin(").append(o).append(") = ").append(sinus(o)).append("\n");
+		sb.append("cos(").append(o).append(") = ").append(cosinus(o)).append("\n");
+		sb.append("tan(").append(o).append(") = ").append(tangent(o)).append("\n");
+		
+		
+		System.out.println(sb.toString());
+		
+	}
+
+	
+	private static float sinus(float x) {
+		x = x%(2*PI);
+		if(x<-PI/2)
+			x = -x;
+		if (-PI/2 <= x && x <= PI/2)
+			return sin0(x);
+		else if(x >= 1.5*PI)
+			return sin0(x-2*PI);
+		else {
+			// PI/2 < x < 1.5*PI, spiegeln!
+			return sin0(PI - x);
+		}
+	}
+	
+	private static float sin0(float x) {
+		float sum = x;
+		float pot = x; 
+		float fact = 1;
+		if(steps<2)
+			return 0;
+		for(int i=3; i<=3+(steps-1)*2; i+=2) {
+			pot = pot * x * x;
+			fact = fact * (i-1) * i;
+			if((i-1)%4==0)
+				sum += pot/fact;
+			else
+				sum -= pot/fact;
+		}
+		return sum;	
+	}
+	
+	private static float cosinus(float x){
+		return sinus(x+PI/2);
+	}
+	private static float tangent(float x){
+		if(x%PI == PI/2 || x%PI == -PI/2){
+			sb.append("\nERROR: tan("+x+") not defined!\n");
+			return 0;
+		}
+		x = x%PI;
+		if(x>PI/2)
+			x-=PI;
+		else if(x<-PI/2)
+			x+=PI;
+		// x is now between -PI/2 and PI/2
+		return tan0(x);
+	}
+	
+	private static float tan0(float x){
+		return sin0(x)/sin0(x+PI/2);
+	}
+}

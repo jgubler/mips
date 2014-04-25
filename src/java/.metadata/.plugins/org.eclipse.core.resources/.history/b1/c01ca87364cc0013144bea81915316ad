@@ -89,8 +89,12 @@ public class Main {
 	 * @return
 	 */
 	private static float modulo(float a, float b){
+		if(a<b)
+			return a;
+		else if(a==b)
+			return 0;
 		double x = a/b;
-		int y = (int) x;
+		int y = (int) Math.floor(x);
 		return a-y*b;
 	}
 }

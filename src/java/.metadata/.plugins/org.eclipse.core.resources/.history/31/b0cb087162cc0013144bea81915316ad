@@ -16,7 +16,6 @@ public class Main {
 		final float u = s.nextFloat();
 		System.out.println("Obere Grenze eingeben: ");
 		final float o = s.nextFloat();
-		s.close();
 		for(float i=u;i<o;i+=0.1){
 			sb.append("\nsin(").append(i).append(") = ").append(sinus(i));
 			sb.append("\n  Java-Lib result: ").append((float) Math.sin(i));
@@ -89,8 +88,12 @@ public class Main {
 	 * @return
 	 */
 	private static float modulo(float a, float b){
+		if(a<b)
+			return a;
+		else if(a==b)
+			return 0;
 		double x = a/b;
-		int y = (int) x;
+		int y = (int) Math.floor(x);
 		return a-y*b;
 	}
 }

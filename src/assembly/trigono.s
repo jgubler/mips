@@ -10,7 +10,7 @@ PI:	.float 3.14159265359
 	.text		# Start of the code
 	
 main: 
-	li.s $f12, 42.0
+	li.s $f12, -123.0
 	jal sin
 	
 	li $v0, 2
@@ -31,14 +31,16 @@ sin:
 	l.s $f0, 0($t0)
 	li.s $f1, 2.0				# multiply by 2 (we need 2*PI)
 	mul.s $f0, $f0, $f1
+	
+	# implementing a%b for floats
 	div.s $f1, $f12, $f0	# divide x/2*PI
-							
 	cvt.w.s $f1, $f1		# convert the result to int to cut off decimal places
-		
 	cvt.s.w $f1, $f1		# convert back to float to calculate
 	mul.s $f0, $f0, $f1		# y*b
 	sub.s $f12, $f12, $f0	# a-y*b
+	
 	jal sin0
+	
 	l.s $f1, 0($sp)
 	lw $t0, 8($sp)
 	lw $ra, 12($sp)
