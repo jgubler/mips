@@ -36,14 +36,14 @@ public class Main {
 	private static float sinus(float x) {
 		x = modulo(x, 2*PI);
 		if(x<-PI/2)
-			x = -x;
+			x += 2*PI;
 		if (-PI/2 <= x && x <= PI/2)
 			return sin0(x);
 		else if(x >= 1.5*PI)
 			return sin0(x-2*PI);
 		else {
 			// PI/2 < x < 1.5*PI, spiegeln!
-			return sin0(PI - x);
+			return sin0(PI/2 - x);
 		}
 	}
 	
