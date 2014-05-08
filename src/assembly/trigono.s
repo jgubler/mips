@@ -167,7 +167,7 @@ sin0:	# sin0 implements the algorithm "sum from i=0 to infinity { (-1)^i * [x^(2
 	mov.s $f1, $f12			# $f1 will hold the current value for x^(2i+1), initialized with x
 	addi $t0, $zero, 1		# $t0 will hold the current value for (2i+1)!, initialized with 1
 	addi $t1, $zero, 3		# $t1 holds i, the loop counter, initialized with 3 (first iteration already done
-	addi $t2, $zero, 15		# $t2 is the loop limit, since we want 7 iterations it is 7*2+1 = 15
+	addi $t2, $zero, 13		# $t2 is the loop limit, since we want 6 iterations it is 6*2+1 = 13
 	addi $t9, $zero, 1		# $t9 is a flag indicating whether the intermediate result has to be
 								# 	added (0) to or subtracted (1) from the sum.
 	
@@ -219,7 +219,7 @@ cos:
 	li.s $f1, 0.5			# divide pi by 2
 	mul.s $f0, $f0, $f1
 	
-	sub.s $f12, $f0, $f12	# x = x - pi/2
+	sub.s $f12, $f0, $f12	# x = pi/2 - x
 
 	jal sin					# call sin with pi/2 - x for cos(x)
 	
@@ -304,10 +304,19 @@ tan0:		# save the registers that are to be used to the stack:  $ra, $f1, $f2, $f
 	li.s $f3, 0.5			# $f3 = 0.5
 	mul.s $f3, $f3, $f2		# $f3 = $f3 * $f2 (0.5 * pi)
 	sub.s $f12, $f3, $f12	# $f12 = $f12-$f3 (x = pi/2 - x), as cos(x) = sin(pi/2 - x)
-
+	
+	# we cannot just calculate now, the range for x has changed to [-pi/2; pi]
+	# if x is in [pi/2, pi], we need to flip it at pi/2, by doing x = pi - x
+	c.lt.s $f3, $f12		# if pi/2 < x, set special register to 1
+	bc1f noshift			# if the special register is false, x is already in [-pi/2; pi/2], jump to noshift
+	sub.s $f12, $f2, $f12	# x is in [pi/2; pi], shift into [-pi/2; pi/2] by x = pi - x
+	
+	noshift:				# x is now definitely in [-pi/2; pi/2], calculate
+	
 	jal sin0				# calc cos(x) via sin0(pi/2 - x)
 	
 	div.s $f0, $f1, $f0		# $f0 = $f1/$f0 (sin(x)/cos(x))
+	
 	
 	# restore the saved registers
 	lw $ra, 16($sp)
